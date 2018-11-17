@@ -95,8 +95,8 @@ func handleMsg(conn net.Conn) {
 
 		case "mining":
 			// "mining":	1. Return prevBlock to miner by conn.Write()
-			//				3. Receive newBlock from miner by conn.Read()
-			//				4. Check if the newBlock is valid, i.e. prevHash match & nonce is valid
+			//				2. Receive newBlock from miner by conn.Read()
+			//				3. Check if the newBlock is valid, i.e. prevHash match & nonce is valid
 			break
 		case "getBCh":
 			// "getBCh":	1. Send blockchain in memory to nearby node.
