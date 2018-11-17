@@ -10,7 +10,7 @@ import (
 
 func main() {
 
-	// Define Host and Port
+	// Set Host and Port
 	serverHost := "localhost"
 	serverPort := "3000"
 	nearbyHost := "localhost"
@@ -28,9 +28,9 @@ func main() {
 	errorMsg(err)
 
 	// Choose Function - Either be a miner, or a nodecontroller
-	// **Becauses it would be Peer2Peer if becomes miner and nodecontroller at the same time.
-	// **We need to made the same TCP socket "Dial" and "Listen".
-	// **By default, it is not supported in golang.
+	// **Becauses it will become Peer2Peer (not Server & Client model) if a node is miner and nodecontroller at the same time.
+	// **Need to make the a TCP socket "Dial" and "Listen" in simultaneously.
+	// **By default, Peer2Peer socket is not supported in golang. Need to use external library.
 	fmt.Println("Self Node port", serverPort, "; Nearby Node port ", nearbyPort)
 	fmt.Println("Enter 1 to become a Node Controller;")
 	fmt.Println("Enter 2 to become a Miner")
@@ -38,14 +38,13 @@ func main() {
 	fmt.Scanln(&input)
 	switch input {
 	case "1":
-		// Connect to Full Node and update Self blockchain
-
+		
 		// Listening
 		listener, err := net.ListenTCP("tcp", serverAddr)
 		errorMsg(err)
 		fmt.Println("Node:	Server Listening on port", serverPort)
 
-		// Create socket if a connection is accepted
+		// Create new socket if a connection is accepted
 		// golang allows multiple connection by default (non-blocking)
 		for {
 			fullNodeDownloadBC()
@@ -55,12 +54,12 @@ func main() {
 		}
 
 	case "2":
-		// Connect to nearby Node
+		// Connect to nearby node
 		conn, err := net.DialTCP("tcp", serverAddr, nearbyAddr)
 		errorMsg(err)
 		fmt.Printf("Miner:	%s <--> %s\n", serverAddr.String(), nearbyAddr.String())
 
-		// Send message
+		// Send message to nearby node
 		var message string
 		fmt.Println("Miner:	Enter data to be packed in blockchain.")
 		fmt.Scan(&message)
@@ -108,7 +107,7 @@ func handleMsg(conn net.Conn) {
 			break
 
 		default:
-			// other:	echo server
+			// other:	echo server for now. To update
 			fmt.Println("Node:	[", string(bytes.Trim(bufReceive, "\x00")), "] received from", conn.RemoteAddr().String())
 
 			bufSend = bufReceive
